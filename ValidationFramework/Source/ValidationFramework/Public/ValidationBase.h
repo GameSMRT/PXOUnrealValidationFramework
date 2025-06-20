@@ -53,6 +53,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,  Category="ValidationBPLibrary")
 	FString FixDescription;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ValidationBPLibrary")
+	bool FixEnabled = true;
+
 	/**
 	* An array of the workflows which the validation is associated with
 	*/
@@ -125,5 +128,8 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
 	FString ValidationUndoContextName();
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static bool IsModuleLoaded(FName ModuleName);
 	
 };

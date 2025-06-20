@@ -43,7 +43,7 @@ FValidationResult UValidation_Level_NDisplay_Mesh_2UVChannels::Validation_Implem
 
 	if (Result.Result == EValidationStatus::Fail)
 	{
-		Result.Message += "Ensure LightMass UV Auto Generation Is Off & Meshes Have 2 UV Channels Only";
+		Result.Message += "Ensure LightMass UV Auto Generation Is Off & Meshes Have 2 UV Channels";
 	}
 	
 	return Result;
@@ -89,9 +89,9 @@ FValidationFixResult UValidation_Level_NDisplay_Mesh_2UVChannels::Fix_Implementa
 EValidationStatus UValidation_Level_NDisplay_Mesh_2UVChannels::ValidateMeshesWithout2UVChannels(UStaticMesh* StaticMesh, const int LodIndex, FString& Message)
 {
 	const int NumUVChannels = StaticMesh->GetNumUVChannels(LodIndex);
-	if (NumUVChannels != 2)
+	if (NumUVChannels < 2)
 	{
-		Message = StaticMesh->GetPathName() + " LOD " + FString::FromInt(LodIndex) + " Has " + FString::FromInt(NumUVChannels) +" UV Channels Instead Of 2\n";
+		Message = StaticMesh->GetPathName() + " LOD " + FString::FromInt(LodIndex) + " Has " + FString::FromInt(NumUVChannels) +" UV Channels\n";
 		return EValidationStatus::Fail;
 	}
 

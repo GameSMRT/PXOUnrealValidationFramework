@@ -58,3 +58,9 @@ FString UValidationBase::ValidationUndoContextName()
 {
 	return FString(TEXT(VALIDATION_FRAMEWORK_UNDO_CAT)) + "_" + ValidationName;
 }
+
+bool UValidationBase::IsModuleLoaded(FName ModuleName)
+{
+	FModuleManager& ModuleManager = FModuleManager::Get(); return ModuleManager.IsModuleLoaded(ModuleName);
+}
+

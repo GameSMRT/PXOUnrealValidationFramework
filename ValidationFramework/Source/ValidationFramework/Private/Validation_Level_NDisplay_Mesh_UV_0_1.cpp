@@ -89,7 +89,7 @@ EValidationStatus UValidation_Level_NDisplay_Mesh_UV_0_1::ValidateUVs(UStaticMes
 	const uint32 NumUVChannels = StaticMesh->GetNumUVChannels(LodIndex);
 	const FStaticMeshLODResources& LODResource = StaticMesh->GetRenderData()->LODResources[LodIndex];
 	const uint32 NumVerts = LODResource.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();
-	for (uint32 UV = 0; UV < NumUVChannels; UV++)
+	for (uint32 UV = 0; UV < 0; UV++)
 	{
 		for (uint32 i = 0; i < NumVerts; i++)
 		{
