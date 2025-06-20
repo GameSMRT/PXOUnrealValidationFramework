@@ -25,7 +25,8 @@ public class ValidationFramework : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "Blutility", "OpenColorIO", "SlateCore", "ImgMedia",
+				"Core", "Blutility", "OpenColorIO", "SlateCore", "ImgMedia", "DMXProtocol"
+
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -42,7 +43,7 @@ public class ValidationFramework : ModuleRules
 				"TimeManagement",
 				"SlateCore", "EditorScriptingUtilities", "UMG", "EngineSettings", "UMGEditor", 
 				"LevelSequence", "SettingsEditor", "SettingsEditor", "MediaPlate", "MediaAssets", "MediaUtils", 
-				"ImgMedia","MovieScene", "WindowsTargetPlatformSettings",
+				"ImgMedia","MovieScene", "DMXProtocol"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
