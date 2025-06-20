@@ -16,6 +16,7 @@ limitations under the License.
 
 #pragma once
 
+
 #include "CoreMinimal.h"
 #include "ValidationBase.h"
 #include "ValidationCommon.h"
@@ -391,20 +392,6 @@ class VALIDATIONFRAMEWORK_API UValidationBPLibrary final : public UBlueprintFunc
 		const FFrameRate Rate);
 
 	/**
-	* Checks to see if the default RHI is set to DirectX12
-	* @return Returns true or false
-	*/
-	UFUNCTION(BlueprintCallable, Category="ValidationBPLibrary")
-	static bool CheckDefaultRHIIsDirectX12();
-	
-	/**
-	* Sets the default RHI to DirectX12 if not set
-	* @return Returns true or false
-	*/
-	UFUNCTION(BlueprintCallable, Category="ValidationBPLibrary")
-	static bool SetProjectRHIDirectX12();
-
-	/**
 	* Causes the editor to raise the restart editor warning
 	*/
 	UFUNCTION(BlueprintCallable, Category="ValidationBPLibrary")
@@ -419,6 +406,28 @@ class VALIDATIONFRAMEWORK_API UValidationBPLibrary final : public UBlueprintFunc
 	UFUNCTION(BlueprintCallable, Category="ValidationBPLibrary")
 	static EFrameRateComparisonStatus CompareFrameRateCompatability(FFrameRate FrameRate1, FFrameRate FrameRate2);
 
-	
-	
+	//PXO Additions
+	UFUNCTION(BlueprintPure, Category = "My BP Library|Levels")
+		static TArray<FString> MyGetStreamingLevels(UObject* WorldContextObject, bool& Success);
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static bool CheckDefaultDMXInputs();
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static bool CheckDefaultDMXOutputs();
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static int32 GetAutoSaveEnabled();
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static int32 GetCheckReferences();
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static void SetCheckReferences(bool CheckReferences);
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static void SetAutoSaveEnabled(bool AutoSave);
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static FString GetKeyBindings();
 };

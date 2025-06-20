@@ -16,7 +16,7 @@ limitations under the License.
 
 
 #include "ValidationBPLibrary.h"
-
+#include "DMXProtocolSettings.h"
 #include "GeneralEngineSettings.h"
 #include "ValidationBase.h"
 #include "VFProjectSettingsEditor.h"
@@ -31,15 +31,15 @@ limitations under the License.
 #include "LevelSequenceActor.h"
 #include "TimeManagementBlueprintLibrary.h"
 #include "ISettingsEditorModule.h"
+#include "Settings/EditorLoadingSavingSettings.h"
+#include "Settings/LevelEditorMiscSettings.h"
+#include "Preferences/UnrealEdKeyBindings.h"
 
 #include "Misc/FileHelper.h"
 #include "Subsystems/UnrealEditorSubsystem.h"
 #if PLATFORM_WINDOWS || PLATFORM_LINUX
 #include "DisplayClusterRootActor.h"
 #include "DisplayClusterConfigurationTypes.h"
-#endif
-#if PLATFORM_WINDOWS
-#include "WindowsTargetSettings.h"
 #endif
 
 
@@ -1444,36 +1444,6 @@ FValidationFixResult UValidationBPLibrary::FixSequencesAgainstFrameRate( const U
 	return ValidationFixResult;
 }
 
-bool UValidationBPLibrary::CheckDefaultRHIIsDirectX12()
-{
-#if PLATFORM_WINDOWS
-	const UWindowsTargetSettings* Settings = GetMutableDefault<UWindowsTargetSettings>();
-	return (Settings->DefaultGraphicsRHI == EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12);
-#else
-	return false;
-#endif
-	
-}
-
-
-bool UValidationBPLibrary::SetProjectRHIDirectX12()
-{
-#if PLATFORM_WINDOWS
-	UWindowsTargetSettings* Settings = GetMutableDefault<UWindowsTargetSettings>();
-	if (Settings->DefaultGraphicsRHI != EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12)
-	{
-		Settings->DefaultGraphicsRHI = EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12;
-		Settings->SaveConfig();
-		WarnAboutRestart();
-		return true;
-		
-	}
-	return false;
-#else
-	return false;
-#endif
-}
-
 void UValidationBPLibrary::WarnAboutRestart()
 {
 	ISettingsEditorModule* SettingsEditorModule = FModuleManager::GetModulePtr<ISettingsEditorModule>("SettingsEditor");
@@ -1504,6 +1474,143 @@ EFrameRateComparisonStatus UValidationBPLibrary::CompareFrameRateCompatability(F
 	return EFrameRateComparisonStatus::Valid;
 }
 
+// PXO Additions
+
+bool UValidationBPLibrary::CheckDefaultDMXInputs()
+{
+#if PLATFORM_WINDOWS
+	//const Uw
+	//return (Settings->DefaultGraphicsRHI == EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12);
+	const UDMXProtocolSettings* Settings = GetMutableDefault<UDMXProtocolSettings>();
+
+	//Settings->InputPortConfigs
+	if (Settings->InputPortConfigs.Num() > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+#else
+	return false;
+#endif
+}
+
+bool UValidationBPLibrary::CheckDefaultDMXOutputs()
+{
+#if PLATFORM_WINDOWS
+	//const Uw
+	//return (Settings->DefaultGraphicsRHI == EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12);
+	const UDMXProtocolSettings* Settings = GetMutableDefault<UDMXProtocolSettings>();
+
+	//Settings->InputPortConfigs
+	if (Settings->OutputPortConfigs.Num() > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+#else
+	return false;
+#endif
+}
+
+int32 UValidationBPLibrary::GetAutoSaveEnabled()
+{
+#if PLATFORM_WINDOWS
+	//const Uw
+	//return (Settings->DefaultGraphicsRHI == EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12);
+	const UEditorLoadingSavingSettings* Settings = GetMutableDefault<UEditorLoadingSavingSettings>();
+
+	return (int32)Settings->bAutoSaveEnable;
+#else
+	return "none";
+#endif
+}
+
+int32 UValidationBPLibrary::GetCheckReferences()
+{
+#if PLATFORM_WINDOWS
+	//const Uw
+	//return (Settings->DefaultGraphicsRHI == EDefaultGraphicsRHI::DefaultGraphicsRHI_DX12);
+	const ULevelEditorMiscSettings* Settings = GetMutableDefault<ULevelEditorMiscSettings >();
+
+	return (int32)Settings->bCheckReferencesOnDelete;
+#else
+	return "none";
+#endif
+}
+
+void UValidationBPLibrary::SetAutoSaveEnabled(bool AutoSave)
+{
+	UEditorLoadingSavingSettings* Settings = GetMutableDefault<UEditorLoadingSavingSettings >();
+	Settings->bAutoSaveEnable = (uint32)AutoSave;
+}
+
+void UValidationBPLibrary::SetCheckReferences(bool CheckReferences) 
+{
+	ULevelEditorMiscSettings* Settings = GetMutableDefault<ULevelEditorMiscSettings >();
+	Settings->bCheckReferencesOnDelete = (uint32)CheckReferences;
+}
+
+TArray<FString> UValidationBPLibrary::MyGetStreamingLevels(UObject* WorldContextObject, bool& Success) {
+	TArray<FString> ret;
+	if (!WorldContextObject) {
+		ret.Add(FString(TEXT("Error: No WorldContextObject?")));
+		Success = false;
+		return ret;
+	}
+	if (!WorldContextObject->GetWorld()) {
+		ret.Add(FString(TEXT("Error: No world object?")));
+		Success = false;
+		return ret;
+	}
+	auto streamedLevels = WorldContextObject->GetWorld()->GetStreamingLevels();
+
+	for (ULevelStreaming* lvl : streamedLevels) {
+		FString f = lvl->GetWorldAssetPackageName();
+		// f is like "/Game/Maps/Notch_Peak_Master", or in the editor "/Game/Maps/UEDPIE_0_Notch_Peak_Master"
+		// Chop at last slash in path if any.
+		int i;
+		if (f.FindLastChar('/', i)) {
+			f = f.RightChop(i + 1);
+		}
+		// Now f is like "UEDPIE_0_Notch_Peak_Master" or "Notch_Peak_Master"
+		// In the editor?
+		if (f.StartsWith(TEXT("UEDPIE"))) {
+			f.RemoveFromStart(TEXT("UEDPIE"));
+			// Like "_2_" being the local simulated player number.
+			if (f.RemoveFromStart(TEXT("_")) && f.Len() > 2 && f[1] == '_') {
+				f.RemoveFromStart(TEXT("0"));
+				f.RemoveFromStart(TEXT("1"));
+				f.RemoveFromStart(TEXT("2"));
+				f.RemoveFromStart(TEXT("3"));
+				f.RemoveFromStart(TEXT("4"));
+				f.RemoveFromStart(TEXT("5"));
+				f.RemoveFromStart(TEXT("6"));
+				f.RemoveFromStart(TEXT("7"));
+				f.RemoveFromStart(TEXT("8"));
+				f.RemoveFromStart(TEXT("_"));
+			}
+		}
+
+		ret.Add(f);
+
+	}
+	Success = true;
+	return ret;
+}
+
+
+FString UValidationBPLibrary::GetKeyBindings() {
+/*	const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings >();
+	return FString::FromInt(Settings->KeyBindings.Num());*/
+	return "None";
+	//return FString::FromInt(UUnrealEdKeyBindings->KeyBindings.Num());
+}
 
 
  
