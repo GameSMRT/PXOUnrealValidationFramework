@@ -1548,12 +1548,14 @@ void UValidationBPLibrary::SetAutoSaveEnabled(bool AutoSave)
 {
 	UEditorLoadingSavingSettings* Settings = GetMutableDefault<UEditorLoadingSavingSettings >();
 	Settings->bAutoSaveEnable = (uint32)AutoSave;
+	Settings->SaveConfig();
 }
 
 void UValidationBPLibrary::SetCheckReferences(bool CheckReferences) 
 {
 	ULevelEditorMiscSettings* Settings = GetMutableDefault<ULevelEditorMiscSettings >();
 	Settings->bCheckReferencesOnDelete = (uint32)CheckReferences;
+	Settings->SaveConfig();
 }
 
 TArray<FString> UValidationBPLibrary::MyGetStreamingLevels(UObject* WorldContextObject, bool& Success) {
@@ -1606,8 +1608,8 @@ TArray<FString> UValidationBPLibrary::MyGetStreamingLevels(UObject* WorldContext
 
 
 FString UValidationBPLibrary::GetKeyBindings() {
-/*	const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings >();
-	return FString::FromInt(Settings->KeyBindings.Num());*/
+	//const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings>();
+	/*return FString::FromInt(Settings->KeyBindings.Num());*/
 	return "None";
 	//return FString::FromInt(UUnrealEdKeyBindings->KeyBindings.Num());
 }
