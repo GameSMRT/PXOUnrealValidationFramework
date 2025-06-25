@@ -34,6 +34,8 @@ limitations under the License.
 #include "Settings/EditorLoadingSavingSettings.h"
 #include "Settings/LevelEditorMiscSettings.h"
 #include "Preferences/UnrealEdKeyBindings.h"
+#include "Preferences/UnrealEdOptions.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #include "Misc/FileHelper.h"
 #include "Subsystems/UnrealEditorSubsystem.h"
@@ -1607,12 +1609,80 @@ TArray<FString> UValidationBPLibrary::MyGetStreamingLevels(UObject* WorldContext
 }
 
 
-FString UValidationBPLibrary::GetKeyBindings() {
+bool UValidationBPLibrary::GetKeyBindings() {
 	//const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings>();
-	/*return FString::FromInt(Settings->KeyBindings.Num());*/
-	return "None";
+	//return FString::FromInt(Settings->KeyBindings.Num());
 	//return FString::FromInt(UUnrealEdKeyBindings->KeyBindings.Num());
+	UUnrealEdOptions* Options = GetMutableDefault<UUnrealEdOptions>();
+
+	if (Options)
+	{
+
+		UUnrealEdKeyBindings* KeyBind = Options->EditorKeyBindings;
+		//UUnrealEdKeyBindings KeyBind2 = *Options->EditorKeyBindings;
+
+
+		Options->EditorKeyBindings = NewObject<class UUnrealEdKeyBindings>(Options, UUnrealEdKeyBindings::StaticClass(), NAME_None, RF_Transactional);
+		if (KeyBind != nullptr)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Found Bindings"));
+			for (const FEditorKeyBinding Binding : KeyBind->KeyBindings)
+			{
+				//UE_LOG(LogTemp, Log, TEXT("Command: %s, Key: %s"), *Binding.CommandName.ToString(), *Binding.Key.GetDisplayName().ToString());
+				
+			}
+		}
+		else {
+			UE_LOG(LogTemp, Log, TEXT("KeyBind Failed"));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT("Options Failed"));
+	}
+
+
+	FString localPath = FPlatformProcess::UserSettingsDir();
+	//string const s = TCHAR_TO_UTF8(*localPath);
+	localPath.Append("UnrealEngine/");
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 4
+	localPath.Append("5.4");
+#endif
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 5
+	localPath.Append("5.5");
+#endif
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 6
+	localPath.Append("5.6");
+#endif
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 7
+	localPath.Append("5.7");
+#endif
+
+	
+
+	//localPath.Append("5.4");
+	//sprintf(localPath, "%d.%d", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+	localPath.Append("/Saved/Config/WindowsEditor/EditorKeyBindings.ini");
+
+	FString file = "";
+
+	FFileHelper::LoadFileToString(file, *localPath);
+
+	if (file != "") {
+		UE_LOG(LogTemp, Warning, TEXT("%s loaded"), *FString(localPath));
+
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Could not load %s"), *FString(localPath));
+	}
+
+	if (file.Contains("~Quote~LevelEditor~Quote~,~Quote~CommandName~Quote~:~Quote~Save~Quote~,~Quote~ChordIndex~Quote~:0,~Quote~Control~Quote~:false,~Quote~Alt~Quote~:false,~Quote~Shift~Quote~:false,~Quote~Command~Quote~:false,~Quote~Key~Quote~:~Quote~None~Quote~~CloseBracket~")) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
+
 
 
  

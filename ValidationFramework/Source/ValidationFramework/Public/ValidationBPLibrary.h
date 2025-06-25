@@ -429,5 +429,5 @@ class VALIDATIONFRAMEWORK_API UValidationBPLibrary final : public UBlueprintFunc
 	static void SetAutoSaveEnabled(bool AutoSave);
 
 	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
-	static FString GetKeyBindings();
+	static bool GetKeyBindings();
 };
