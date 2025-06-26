@@ -1610,7 +1610,7 @@ TArray<FString> UValidationBPLibrary::MyGetStreamingLevels(UObject* WorldContext
 
 
 bool UValidationBPLibrary::GetKeyBindings() {
-	//const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings>();
+	/*//const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings>();
 	//return FString::FromInt(Settings->KeyBindings.Num());
 	//return FString::FromInt(UUnrealEdKeyBindings->KeyBindings.Num());
 	UUnrealEdOptions* Options = GetMutableDefault<UUnrealEdOptions>();
@@ -1638,7 +1638,7 @@ bool UValidationBPLibrary::GetKeyBindings() {
 	}
 	else {
 		UE_LOG(LogTemp, Log, TEXT("Options Failed"));
-	}
+	}*/
 
 
 	FString localPath = FPlatformProcess::UserSettingsDir();
