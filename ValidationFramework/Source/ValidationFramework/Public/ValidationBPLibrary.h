@@ -430,4 +430,7 @@ class VALIDATIONFRAMEWORK_API UValidationBPLibrary final : public UBlueprintFunc
 
 	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
 	static bool GetKeyBindings();
+
+	UFUNCTION(BlueprintCallable, Category = "ValidationBPLibrary")
+	static void GetKeyBindings2();
 };

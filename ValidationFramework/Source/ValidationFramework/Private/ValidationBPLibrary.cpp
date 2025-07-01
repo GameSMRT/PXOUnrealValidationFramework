@@ -36,6 +36,7 @@ limitations under the License.
 #include "Preferences/UnrealEdKeyBindings.h"
 #include "Preferences/UnrealEdOptions.h"
 #include "Runtime/Launch/Resources/Version.h"
+#include "Misc/Paths.h"
 
 #include "Misc/FileHelper.h"
 #include "Subsystems/UnrealEditorSubsystem.h"
@@ -1640,6 +1641,9 @@ bool UValidationBPLibrary::GetKeyBindings() {
 		UE_LOG(LogTemp, Log, TEXT("Options Failed"));
 	}*/
 
+	/*
+	UUnrealEdOptions* Options = GetMutableDefault<UUnrealEdOptions>();
+	Options->SaveConfig();
 
 	FString localPath = FPlatformProcess::UserSettingsDir();
 	//string const s = TCHAR_TO_UTF8(*localPath);
@@ -1656,12 +1660,14 @@ bool UValidationBPLibrary::GetKeyBindings() {
 #if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 7
 	localPath.Append("5.7");
 #endif
+*/
 
+	FString localPath = FPaths::EngineDir();
 	
 
 	//localPath.Append("5.4");
 	//sprintf(localPath, "%d.%d", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
-	localPath.Append("/Saved/Config/WindowsEditor/EditorKeyBindings.ini");
+	localPath.Append("Saved/Config/WindowsEditor/EditorKeyBindings.ini");
 
 	FString file = "";
 
@@ -1682,6 +1688,48 @@ bool UValidationBPLibrary::GetKeyBindings() {
 		return false;
 	}
 }
+
+
+void UValidationBPLibrary::GetKeyBindings2() {
+
+	
+	/*//const UUnrealEdKeyBindings* Settings = GetMutableDefault<UUnrealEdKeyBindings>();
+	//return FString::FromInt(Settings->KeyBindings.Num());
+	//return FString::FromInt(UUnrealEdKeyBindings->KeyBindings.Num());
+	UUnrealEdOptions* Options = GetMutableDefault<UUnrealEdOptions>();
+
+	if (!Options->EditorKeyBindings)
+	{
+		Options->EditorKeyBindings = NewObject<class UUnrealEdKeyBindings>(Options, UUnrealEdKeyBindings::StaticClass(), NAME_None, RF_Transactional);
+	}
+
+	if (Options)
+	{
+
+		UUnrealEdKeyBindings* KeyBind = Options->EditorKeyBindings;
+		//UUnrealEdKeyBindings KeyBind2 = *Options->EditorKeyBindings;
+
+
+
+
+		if (KeyBind != nullptr)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Found Bindings"));
+			for (const FEditorKeyBinding Binding : KeyBind->KeyBindings)
+			{
+				//UE_LOG(LogTemp, Log, TEXT("Command: %s, Key: %s"), *Binding.CommandName.ToString(), *Binding.Key.GetDisplayName().ToString());
+
+			}
+		}
+		else {
+			UE_LOG(LogTemp, Log, TEXT("KeyBind Failed"));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT("Options Failed"));
+	}*/
+}
+
 
 
 
